@@ -1,0 +1,14 @@
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+Lint/RescueException:
+  Exclude:
+    - 'lambda.rb'
+Metrics/AbcSize:
+  Max: 18
+Metrics/MethodLength:
+  Max: 33
+Metrics/LineLength:
+  Max: 120
+Style/GlobalVars:
+  Exclude:
+    - 'lambda.rb'

@@ -1,0 +1,25 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    connection_pool (2.2.2)
+    rack (2.0.6)
+    rack-contrib (2.1.0)
+      rack (~> 2.0)
+    rack-protection (2.0.4)
+      rack
+    redis (4.0.3)
+    sidekiq (5.2.3)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rack
+  rack-contrib
+  sidekiq
+
+BUNDLED WITH
+   1.17.1

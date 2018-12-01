@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Parameters:
+  SecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: Security Group IDs that Lambda will use
+  VpcSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: VPC Subnet IDs that Lambda will use (min 2 for HA)
+  RedisHost:
+    Type: String
+    Description: Redis host name
+
+Resources:
+  SidekiqWebFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: SidekiqWeb
+      Handler: lambda.handler
+      Runtime: ruby2.5
+      Policies:
+        - AWSLambdaENIManagementAccess
+      CodeUri: "./"
+      MemorySize: 512
+      Timeout: 30
+      VpcConfig:
+        SubnetIds: !Ref VpcSubnetIds
+        SecurityGroupIds: !Ref SecurityGroupIds
+      Events:
+        SidekiqWebApi:
+            Type: Api
+            Properties:
+                Path: /
+                Method: ANY
+                RestApiId: !Ref SidekiqWebAPI
+      Environment:
+        Variables:
+          REDIS_HOST: !Ref RedisHost
+  SidekiqWebAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: SidekiqWebAPI
+      StageName: Prod
+      DefinitionBody:
+        swagger: '2.0'
+        basePath: '/Prod'
+        info:
+          title: !Ref AWS::StackName
+        paths:
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri:
+                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SidekiqWebFunction.Arn}/invocations'
+                passthroughBehavior: "when_no_match"
+                httpMethod: POST
+                type: "aws_proxy"
+          /:
+            get:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri:
+                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SidekiqWebFunction.Arn}/invocations'
+                passthroughBehavior: "when_no_match"
+                httpMethod: POST
+                type: "aws_proxy"
+  ConfigLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - SidekiqWebFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SidekiqWebFunction
+      Principal: apigateway.amazonaws.com
+Outputs:
+  SidekiqWebUrl:
+    Description: App endpoint URL
+    Value: !Sub "https://${SidekiqWebAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
