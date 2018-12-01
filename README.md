@@ -4,6 +4,14 @@
   <img src="https://raw.githubusercontent.com/hoshinotsuyoshi/serverless-sidekiq-web/master/image.jpg" alt="site image"/>
 </p>
 
+----
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/hoshinotsuyoshi/serverless-sidekiq-web/master/stack.png" alt="stack image"/>
+</p>
+
+----
+
 Sidekiq::Web monitor powered by AWS lambda. 
 
 Based on [lambda.rb](https://github.com/aws-samples/serverless-sinatra-sample/blob/6f4fe27/lambda.rb) by [aws-samples/serverless-sinatra-sample](https://github.com/aws-samples/serverless-sinatra-sample)
