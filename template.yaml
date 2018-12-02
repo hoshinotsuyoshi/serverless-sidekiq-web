@@ -22,7 +22,7 @@ Resources:
       Policies:
         - AWSLambdaENIManagementAccess
       CodeUri: "./"
-      MemorySize: 512
+      MemorySize: 128
       Timeout: 30
       VpcConfig:
         SubnetIds: !Ref VpcSubnetIds
